@@ -1,0 +1,61 @@
+// Modelagem do Banco de Dados - App Offline de Gestão (SQLite)
+
+Table clients {
+  id integer [primary key, increment]
+  name varchar [not null]
+  type varchar [not null, note: "conhecido (fiado) ou href (desconhecido/completo)"]
+  phone varchar
+  cpf_rg varchar [note: "Obrigatório para HREF"]
+  address text [note: "Obrigatório para HREF"]
+  observation text
+  created_at timestamp
+}
+
+Table products {
+  id integer [primary key, increment]
+  name varchar [not null]
+  category varchar
+  stock_quantity integer [not null, default: 0]
+  cost_price decimal(10,2) [not null]
+  sale_price decimal(10,2) [not null]
+}
+
+Table parties {
+  id integer [primary key, increment]
+  client_id integer [ref: > clients.id, not null]
+  party_date datetime [not null]
+  package_type varchar
+  total_value decimal(10,2) [not null]
+  down_payment decimal(10,2) [default: 0]
+  status varchar [not null, note: "agendada, realizada, pendente, paga"]
+  created_at timestamp
+}
+
+Table transactions {
+  id integer [primary key, increment]
+  type varchar [not null, note: "receita ou despesa"]
+  category varchar [not null, note: "Ex: Festas, Estoque, Despesa Fixa"]
+  amount decimal(10,2) [not null]
+  description text
+  date datetime [not null]
+  reference_id integer [note: "ID opcional ligado a festa ou notinha"]
+}
+
+Table debts {
+  id integer [primary key, increment]
+  client_id integer [ref: > clients.id, not null]
+  total_amount decimal(10,2) [not null]
+  status varchar [not null, default: 'aberto', note: "aberto ou quitado"]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table debt_items {
+  id integer [primary key, increment]
+  debt_id integer [ref: > debts.id, not null]
+  product_id integer [ref: > products.id, note: "Opcional caso seja produto do estoque"]
+  description varchar [not null, note: "Nome do item ou serviço anotado na notinha"]
+  quantity integer [not null, default: 1]
+  unit_price decimal(10,2) [not null]
+  total_price decimal(10,2) [not null]
+}

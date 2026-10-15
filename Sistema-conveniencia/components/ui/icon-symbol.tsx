@@ -18,6 +18,10 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'person.2.fill': 'people', 
+  'clipboard.fill': 'assignment', // <-- Já está aqui o 'assignment' mapeado para 'clipboard.fill'!
+  'festival.fill': 'celebration', // <-- Já está aqui o 'celebration' mapeado para 'festival.fill'!
+  'product.quantity': 'inventory', // <-- Já está aqui o 'inventory' mapeado para 'product.quantity'!
 } as IconMapping;
 
 /**

@@ -126,6 +126,6 @@ Este projeto está sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE)
 
 <div align="center">
 
-Feito com ☕ por **Gui**
+Feito com ☕ por **Guilherme Soares**
 
 </div>

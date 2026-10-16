@@ -1,0 +1,22 @@
+{
+  "name": "backend-gestao-offline",
+  "version": "1.0.0",
+  "description": "Backend (Express + Knex + SQLite) do app de gestão: clientes, festas, fiado e transações",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "knex migrate:latest",
+    "rollback": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "test": "node scripts/smoke.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "knex": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

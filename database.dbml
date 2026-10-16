@@ -1,5 +1,11 @@
 // Modelagem do Banco de Dados - App Offline de Gestão (SQLite)
 
+Table settings {
+  id integer [primary key, increment]
+  key varchar [not null, unique, note: "Ex: ui_mode"]
+  value varchar [not null, note: "Ex: 'light', 'dark' ou 'system'"]
+}
+
 Table clients {
   id integer [primary key, increment]
   name varchar [not null]
@@ -9,15 +15,6 @@ Table clients {
   address text [note: "Obrigatório para HREF"]
   observation text
   created_at timestamp
-}
-
-Table products {
-  id integer [primary key, increment]
-  name varchar [not null]
-  category varchar
-  stock_quantity integer [not null, default: 0]
-  cost_price decimal(10,2) [not null]
-  sale_price decimal(10,2) [not null]
 }
 
 Table parties {
@@ -34,7 +31,7 @@ Table parties {
 Table transactions {
   id integer [primary key, increment]
   type varchar [not null, note: "receita ou despesa"]
-  category varchar [not null, note: "Ex: Festas, Estoque, Despesa Fixa"]
+  category varchar [not null, note: "Ex: Festas, Despesa Fixa"]
   amount decimal(10,2) [not null]
   description text
   date datetime [not null]
@@ -53,8 +50,7 @@ Table debts {
 Table debt_items {
   id integer [primary key, increment]
   debt_id integer [ref: > debts.id, not null]
-  product_id integer [ref: > products.id, note: "Opcional caso seja produto do estoque"]
-  description varchar [not null, note: "Nome do item ou serviço anotado na notinha"]
+  description varchar [not model, note: "Nome do item ou serviço anotado na notinha"]
   quantity integer [not null, default: 1]
   unit_price decimal(10,2) [not null]
   total_price decimal(10,2) [not null]

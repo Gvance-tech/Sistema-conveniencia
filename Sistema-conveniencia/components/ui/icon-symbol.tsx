@@ -22,6 +22,8 @@ const MAPPING = {
   'clipboard.fill': 'assignment', // <-- Já está aqui o 'assignment' mapeado para 'clipboard.fill'!
   'festival.fill': 'celebration', // <-- Já está aqui o 'celebration' mapeado para 'festival.fill'!
   'product.quantity': 'inventory', // <-- Já está aqui o 'inventory' mapeado para 'product.quantity'!
+  'person.circle.fill': 'account-circle',
+  'moneybill': 'attach-money',
 } as IconMapping;
 
 /**

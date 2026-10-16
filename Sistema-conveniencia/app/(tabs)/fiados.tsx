@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, FlatList, Image } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Link, useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Logo from '../../assets/images/Logo.jpg';
+import { api } from '../../services/api'; // Ajusta o caminho conforme a tua estrutura
 
-// Dados de exemplo provisórios para simular os fiados na grelha
-const MOCK_FIADOS = [
-  { id: '1', name: 'João da Padaria', amount: 'R$ 45,00' },
-  { id: '2', name: 'Carlos Silva', amount: 'R$ 120,50' },
-  { id: '3', name: 'Maria Souza', amount: 'R$ 32,00' },
-  { id: '4', name: 'Pedro Henrique', amount: 'R$ 85,00' },
-];
+export default function FiadosScreen() {
+  const router = useRouter();
+  const [debts, setDebts] = useState<any[]>([]);
 
-export default function FiadoScreen() {
-  const [search, setSearch] = useState('');
-
-  const renderItem = ({ item }: { item: typeof MOCK_FIADOS[0] }) => (
-    <TouchableOpacity style={styles.card} onPress={() => console.log(`Abrir fiado de ${item.name}`)}>
-      <Text style={styles.cardTitle} numberOfLines={1}>{item.name}</Text>
-      <Text style={styles.cardAmount}>{item.amount}</Text>
-    </TouchableOpacity>
+  // Carrega apenas os fiados do SQLite sempre que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        const openDebts = api.getFiadosOpenDebts();
+        setDebts(openDebts);
+      } catch (error) {
+        console.error("Erro ao carregar fiados:", error);
+      }
+    }, [])
   );
+
+  const calcularTotalGeral = () => {
+    return debts.reduce((acc, item) => acc + Number(item.total_amount), 0);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,35 +35,53 @@ export default function FiadoScreen() {
         <Image source={Logo} style={styles.logoImage} />
       </View>
 
-      {/* Barra de Procura */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Procurar cliente..."
-          placeholderTextColor="#888"
-          value={search}
-          onChangeText={setSearch}
-        />
+      {/* Bloco de Valor Total de Fiados Abertos */}
+      <View style={styles.totalCard}>
+        <Text style={styles.totalLabel}>Total em Fiados Abertos</Text>
+        <Text style={styles.totalValue}>
+          {calcularTotalGeral().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </Text>
       </View>
 
-      {/* Seção da Lista */}
-      <View style={styles.listSection}>
-        <Text style={styles.sectionTitle}>Lista de fiados</Text>
-        <FlatList
-          data={MOCK_FIADOS}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.columnWrapper}
-          contentContainerStyle={styles.listContainer}
-        />
+      {/* Lista de Clientes com Fiado */}
+      <View style={styles.listContainer}>
+        <Text style={styles.sectionTitle}>Clientes com fiado ativo</Text>
+        <ScrollView contentContainerStyle={styles.scrollList} showsVerticalScrollIndicator={false}>
+          {debts.length === 0 ? (
+            <Text style={styles.emptyText}>Nenhum fiado registado.</Text>
+          ) : (
+            debts.map((debt) => (
+              <TouchableOpacity
+                key={debt.id.toString()}
+                style={styles.clientCard}
+                onPress={() => router.push({
+                  pathname: '/(tabs)/sub_pages/detalhes-fiado',
+                  params: { id: debt.client_id, nomeCliente: debt.client_name }
+                })}
+              >
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <Text style={styles.clientName} numberOfLines={1}>{debt.client_name}</Text>
+                  <Text style={styles.clientDate}>
+                    Desde: {new Date(debt.created_at).toLocaleDateString('pt-BR')}
+                  </Text>
+                </View>
+                <Text style={styles.clientDebt}>
+                  {Number(debt.total_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </Text>
+              </TouchableOpacity>
+            ))
+          )}
+        </ScrollView>
       </View>
 
       {/* Botão Inferior: Novo Fiado */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.newButton} onPress={() => console.log('Criar novo fiado')}>
-          <Text style={styles.newButtonText}>Novo fiado</Text>
-        </TouchableOpacity>
+        <Link href="/(tabs)/sub_pages/novo-fiado" asChild>
+          <TouchableOpacity style={styles.newFiadoButton}>
+            <Ionicons name="add-circle-outline" size={22} color="#1B2A4A" style={{ marginRight: 8 }} />
+            <Text style={styles.newFiadoText}>Novo fiado</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </SafeAreaView>
   );
@@ -66,9 +90,9 @@ export default function FiadoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFE800', // Amarelo vibrante da marca
+    backgroundColor: '#FFE800',
     paddingHorizontal: 20,
-    paddingTop: 45,
+    paddingTop: 30,
   },
   header: {
     flexDirection: 'row',
@@ -77,7 +101,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   headerTitle: {
-    color: '#1B2A4A', // Azul escuro
+    color: '#1B2A4A',
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -88,66 +112,84 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#1B2A4A',
   },
-  searchContainer: {
+  totalCard: {
+    backgroundColor: '#1B2A4A',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
     marginBottom: 15,
-  },
-  searchInput: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: '#1B2A4A',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    height: 45,
-    color: '#1B2A4A',
-    fontSize: 16,
-  },
-  listSection: {
-    flex: 1,
-  },
-  sectionTitle: {
-    color: '#1B2A4A',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 10,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  card: {
-    backgroundColor: '#1B2A4A', // Cartões em azul escuro
-    width: '48%',
-    height: 90,
-    borderRadius: 14,
-    padding: 12,
-    justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 4,
   },
-  cardTitle: {
-    color: '#FFFFFF',
+  totalLabel: {
+    color: '#A0AEC0',
     fontSize: 14,
+    marginBottom: 5,
+  },
+  totalValue: {
+    color: '#FFE800',
+    fontSize: 28,
     fontWeight: 'bold',
   },
-  cardAmount: {
-    color: '#FFE800', // Valor destacado em amarelo
+  listContainer: {
+    flex: 1,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    color: '#1B2A4A',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  scrollList: {
+    gap: 10,
+    paddingBottom: 10,
+  },
+  clientCard: {
+    backgroundColor: '#1B2A4A',
+    borderRadius: 14,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  clientName: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    alignSelf: 'flex-end',
+  },
+  clientDate: {
+    color: '#A0AEC0',
+    fontSize: 12,
+    marginTop: 3,
+  },
+  clientDebt: {
+    color: '#FFE800',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    color: '#1B2A4A',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 20,
   },
   footer: {
     paddingVertical: 15,
   },
-  newButton: {
-    backgroundColor: '#1B2A4A',
+  newFiadoButton: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     height: 50,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -156,8 +198,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
-  newButtonText: {
-    color: '#FFE800',
+  newFiadoText: {
+    color: '#1B2A4A',
     fontSize: 18,
     fontWeight: 'bold',
   },

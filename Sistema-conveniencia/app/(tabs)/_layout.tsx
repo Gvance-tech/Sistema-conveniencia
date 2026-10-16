@@ -16,7 +16,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: "#1B2A4A", // Fundo azul escuro da barra
           borderTopColor: "#1B2A4A",
-          height: 60,
+          height: 80,
           paddingBottom: 8,
           paddingTop: 8,
         },
@@ -50,6 +50,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="financas"
+        options={{
+          title: "Finanças",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="moneybill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="festas"
         options={{
           title: "Festas",
@@ -59,12 +68,84 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="estoque"
+        name="perfil"
         options={{
-          title: "Estoque",
+          title: "Perfil",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="product.quantity" color={color} />
+            <IconSymbol size={28} name="person.circle.fill" color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/novo-fiado"
+        options={{
+          title: "Novo Fiado",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/detalhes-fiado"
+        options={{
+          title: "Detalhes do Fiado",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/nova-notinha"
+        options={{
+          title: "Nova Notinha",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/detalhes-notinha"
+        options={{
+          title: "Detalhes da Notinha",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/nova-despesa"
+        options={{
+          title: "Nova Despesa",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/nova-receita"
+        options={{
+          title: "Nova Receita",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/nova-festa"
+        options={{
+          title: "Nova Festa",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+        />
+      <Tabs.Screen
+        name="sub_pages/detalhes-festa"
+        options={{
+          title: "Detalhes da Festa",
+          href: null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
+        name="sub_pages/editar-fiado"
+        options={{
+          title: "Editar Fiado",
+          href: null,
+          tabBarStyle: { display: "none" },
         }}
       />
     </Tabs>

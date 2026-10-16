@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 
-import Logo from '@/assets/images/Logo.jpg';
+import Logo from '../../assets/images/Logo.jpg';
 import { Link } from 'expo-router';
+import { api } from '../../services/api'; // Ajusta o caminho conforme a localização real do teu api.ts
 
 export default function HomeScreen() {
+  const [balance, setBalance] = useState<number>(0);
+
+  useEffect(() => {
+    try {
+      // 1. Garante que o banco e as tabelas estão inicializados
+      api.initDatabase();
+
+      // 2. Busca o saldo atual calculado a partir das transações
+      const currentBalance = api.getDailyBalance();
+      setBalance(currentBalance);
+    } catch (error) {
+      console.error("Erro ao carregar o saldo:", error);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Cabeçalho: Nome da empresa e Logo */}
@@ -16,33 +32,35 @@ export default function HomeScreen() {
       {/* Card de Saldo */}
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Saldo Atual da Conveniência</Text>
-        <Text style={styles.balanceValue}>R$ 0,00</Text>
+        <Text style={styles.balanceValue}>
+          {balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </Text>
       </View>
 
       {/* Grade de Botões Principais */}
       <View style={styles.gridContainer}>
         <Link href="/(tabs)/fiados" asChild>
-        <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Fiado')}>
-          <Text style={styles.buttonText}>Fiado</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Fiado')}>
+            <Text style={styles.buttonText}>Fiado</Text>
+          </TouchableOpacity>
         </Link>
 
-        <Link href="/(tabs)/notinha" asChild>
-        <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Notinha')}>
-          <Text style={styles.buttonText}>Notinha</Text>
-        </TouchableOpacity>
+        <Link href="/(tabs)/notinhas" asChild>
+          <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Notinha')}>
+            <Text style={styles.buttonText}>Notinha</Text>
+          </TouchableOpacity>
         </Link>
         
         <Link href="/(tabs)/festas" asChild>
-        <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Festas')}>
-          <Text style={styles.buttonText}>Festas</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Festas')}>
+            <Text style={styles.buttonText}>Festas</Text>
+          </TouchableOpacity>
         </Link>
 
-        <Link href="/(tabs)/estoque" asChild>
-        <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Estoque')}>
-          <Text style={styles.buttonText}>Estoque</Text>
-        </TouchableOpacity>
+        <Link href="/(tabs)/perfil" asChild>
+          <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Ir para Perfil')}>
+            <Text style={styles.buttonText}>Perfil</Text>
+          </TouchableOpacity>
         </Link>
       </View>
     </SafeAreaView>

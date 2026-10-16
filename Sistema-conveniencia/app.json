@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Sistema-conveniencia",
+    "name": "Brasileirinho",
     "slug": "Sistema-conveniencia",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Logo.jpg",
     "scheme": "sistemaconveniencia",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,24 +13,23 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#FFE800",
+        "foregroundImage": "./assets/images/Logo.jpg"
       },
+      "package": "com.gmrrbisolutions.brasileirinho",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/Logo.jpg"
     },
     "plugins": [
       "expo-router",
-     [
+      [
         "expo-splash-screen",
         {
-          "image": "./assets/images/Logo.jpg", 
+          "image": "./assets/images/Logo.jpg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#FFE800",
@@ -44,6 +43,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dc60b1a7-389b-4967-b495-ea3393af7f5f"
+      }
     }
   }
 }
